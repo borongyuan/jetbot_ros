@@ -10,8 +10,8 @@ from std_msgs.msg import String
 
 # sets motor speed between [-1.0, 1.0]
 def set_speed(motor_ID, value):
-	max_pwm = 115.0
-	speed = int(min(max(abs(value * max_pwm), 0), max_pwm))
+	max_pwm = 255
+	speed = min(max(abs(int(value * max_pwm)), 0), max_pwm)
 
 	if motor_ID == 1:
 		motor = motor_left
@@ -23,7 +23,7 @@ def set_speed(motor_ID, value):
 	
 	motor.setSpeed(speed)
 
-	if value > 0:
+	if value < 0:
 		motor.run(Adafruit_MotorHAT.FORWARD)
 	else:
 		motor.run(Adafruit_MotorHAT.BACKWARD)
@@ -51,17 +51,17 @@ def on_cmd_str(msg):
 	rospy.loginfo(rospy.get_caller_id() + ' cmd_str=%s', msg.data)
 
 	if msg.data.lower() == "left":
-		set_speed(motor_left_ID,  -1.0)
-		set_speed(motor_right_ID,  1.0) 
+		set_speed(motor_left_ID,  -0.3)
+		set_speed(motor_right_ID,  0.3) 
 	elif msg.data.lower() == "right":
-		set_speed(motor_left_ID,   1.0)
-		set_speed(motor_right_ID, -1.0) 
+		set_speed(motor_left_ID,   0.3)
+		set_speed(motor_right_ID, -0.3) 
 	elif msg.data.lower() == "forward":
-		set_speed(motor_left_ID,   1.0)
-		set_speed(motor_right_ID,  1.0)
+		set_speed(motor_left_ID,   0.4)
+		set_speed(motor_right_ID,  0.4)
 	elif msg.data.lower() == "backward":
-		set_speed(motor_left_ID,  -1.0)
-		set_speed(motor_right_ID, -1.0)  
+		set_speed(motor_left_ID,  -0.4)
+		set_speed(motor_right_ID, -0.4)  
 	elif msg.data.lower() == "stop":
 		all_stop()
 	else:
